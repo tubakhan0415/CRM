@@ -1,15 +1,24 @@
+// middleware/upload.js
 const multer = require("multer");
 const path = require("path");
 
+// Storage config
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // make sure this folder exists
   },
-  filename: (req, file, cb) => {
-    cb(null, `receipt-${Date.now()}${path.extname(file.originalname)}`);
-  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + ext);
+  }
 });
 
-const upload = multer({ storage });
+// File filter (optional)
+const fileFilter = (req, file, cb) => {
+  // Accept any file type; restrict as needed
+  cb(null, true);
+};
+
+const upload = multer({ storage, fileFilter });
 
 module.exports = upload;
